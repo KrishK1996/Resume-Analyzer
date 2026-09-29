@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tell Tailwind v4 to use class-based dark mode (toggled via .dark on <html>) */
+@custom-variant dark (&:is(.dark *));
+
 @layer base {
   * {
     box-sizing: border-box;
