@@ -49,7 +49,10 @@ Thumbs.db
 *.swp
 *.swo
 
-# Temporary files
+# Temporary files and logs
 *.tmp
 temp/
 scratch/
+logs/
+*.log
+backend/logs/

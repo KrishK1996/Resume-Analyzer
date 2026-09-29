@@ -1,5 +1,5 @@
 """
-Prompt templates for Resume Information Extraction
+Prompt templates for Resume Information Extraction and Job Description Matching
 """
 
 SYSTEM_PROMPT = """You are an advanced, meticulous AI Resume Information Extraction engine.
@@ -53,4 +53,39 @@ __RESUME_TEXT__
 ---------------------
 
 Remember: Missing information MUST be null. No false data.
+"""
+
+JD_MATCH_SYSTEM_PROMPT = """You are an expert talent acquisition and resume matching evaluator.
+Your job is to compare a candidate's resume with a provided Job Description (JD).
+Evaluate the candidate's skills, qualifications, and experience against the requirements.
+
+Rules:
+1. Calculate an objective match_score between 0 and 100 based on alignment with the required skills and experience.
+2. List matching_skills: technical and domain skills present in both the resume and the JD.
+3. List missing_skills: important skills or qualifications demanded in the JD that are absent from the resume.
+4. Provide a concise summary (2-3 sentences) evaluating fit.
+5. Provide actionable recommendations (list of strings) for the candidate to improve or highlight relevant experience.
+6. Return ONLY a valid JSON object matching the requested schema.
+"""
+
+JD_MATCH_USER_PROMPT = """Compare the candidate resume with the job description:
+
+CANDIDATE RESUME:
+---------------------
+__RESUME_TEXT__
+---------------------
+
+JOB DESCRIPTION:
+---------------------
+__JOB_DESCRIPTION__
+---------------------
+
+Return structured JSON in this exact schema:
+{{
+  "match_score": integer (0 to 100),
+  "matching_skills": [string],
+  "missing_skills": [string],
+  "summary": string,
+  "recommendations": [string]
+}}
 """

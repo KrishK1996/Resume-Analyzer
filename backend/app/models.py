@@ -28,6 +28,20 @@ class ResumeData(BaseModel):
     professional_summary: Optional[str] = Field(default=None, description="Concise professional summary, or null if missing")
 
 
+class JobMatchResult(BaseModel):
+    match_score: Optional[int] = Field(default=None, description="Match score percentage from 0 to 100")
+    matching_skills: List[str] = Field(default_factory=list, description="Skills present in both resume and JD")
+    missing_skills: List[str] = Field(default_factory=list, description="Skills required by JD but missing in resume")
+    summary: Optional[str] = Field(default=None, description="Concise assessment of candidate suitability")
+    recommendations: List[str] = Field(default_factory=list, description="Specific recommendations to bridge skill gaps")
+
+
+class CompareJDRequest(BaseModel):
+    resume_text: Optional[str] = None
+    resume_data: Optional[ResumeData] = None
+    job_description: str
+
+
 class FileAnalysisResult(BaseModel):
     filename: str
     file_size_bytes: int
@@ -35,6 +49,7 @@ class FileAnalysisResult(BaseModel):
     error_message: Optional[str] = None
     character_count: Optional[int] = None
     data: Optional[ResumeData] = None
+    job_match: Optional[JobMatchResult] = None
 
 
 class MultiAnalysisResponse(BaseModel):

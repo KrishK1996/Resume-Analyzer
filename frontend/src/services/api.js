@@ -34,10 +34,14 @@ export async function setApiKey(apiKey) {
   return await res.json();
 }
 
-export async function analyzeResumes(files, customApiKey = null) {
+export async function analyzeResumes(files, jobDescription = '', customApiKey = null) {
   const formData = new FormData();
   for (const file of files) {
     formData.append('files', file);
+  }
+
+  if (jobDescription && jobDescription.trim()) {
+    formData.append('job_description', jobDescription.trim());
   }
 
   const headers = {};
@@ -57,4 +61,41 @@ export async function analyzeResumes(files, customApiKey = null) {
   }
 
   return await res.json();
+}
+
+export async function compareJobDescription(resumeData, resumeText, jobDescription, customApiKey = null) {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  if (customApiKey && customApiKey.trim()) {
+    headers['x-groq-api-key'] = customApiKey.trim();
+  }
+
+  const res = await fetch(`${API_BASE}/compare-jd`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      resume_data: resumeData,
+      resume_text: resumeText,
+      job_description: jobDescription,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Job description comparison failed' }));
+    throw new Error(err.detail || `Server error (${res.status})`);
+  }
+
+  return await res.json();
+}
+
+export async function getSystemLogs(lines = 100) {
+  try {
+    const res = await fetch(`${API_BASE}/logs?lines=${lines}`);
+    if (!res.ok) throw new Error('Failed to fetch logs');
+    return await res.json();
+  } catch (err) {
+    console.error('Failed to get system logs:', err);
+    return { logs: [], error: err.message };
+  }
 }

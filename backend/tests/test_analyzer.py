@@ -4,10 +4,13 @@ Automated unit tests for Resume Analyzer backend components.
 import io
 import pytest
 from pypdf import PdfWriter
+from fastapi.testclient import TestClient
+
 from app.pdf_parser import extract_text_from_pdf_bytes, PDFParsingException
-from app.models import ResumeData, EducationItem, WorkExperienceItem
-from app.prompts import EXTRACTION_USER_PROMPT
+from app.models import ResumeData, EducationItem, WorkExperienceItem, JobMatchResult, FileAnalysisResult
+from app.prompts import EXTRACTION_USER_PROMPT, JD_MATCH_USER_PROMPT
 from app.llm_service import normalize_extracted_dict
+from app.main import app
 
 
 def test_empty_bytes_raises_exception():
@@ -39,6 +42,15 @@ def test_prompt_placeholder_replacement_no_keyerror():
     prompt = EXTRACTION_USER_PROMPT.replace("__RESUME_TEXT__", sample_text)
     assert sample_text in prompt
     assert "full_name" in prompt
+
+
+def test_jd_prompt_placeholder_replacement():
+    sample_resume = "Skills: Python, FastAPI"
+    sample_jd = "Looking for Senior Python Developer"
+    prompt = JD_MATCH_USER_PROMPT.replace("__RESUME_TEXT__", sample_resume).replace("__JOB_DESCRIPTION__", sample_jd)
+    assert sample_resume in prompt
+    assert sample_jd in prompt
+    assert "match_score" in prompt
 
 
 def test_normalizer_handles_dummy_strings_and_aliases():
@@ -110,3 +122,39 @@ def test_resume_data_serialization():
     assert dumped["certifications"] is None
     assert len(dumped["skills"]) == 2
     assert dumped["education"][0]["institution"] == "MIT"
+
+
+def test_job_match_result_schema():
+    match = JobMatchResult(
+        match_score=85,
+        matching_skills=["Python", "FastAPI"],
+        missing_skills=["Kubernetes"],
+        summary="Strong candidate with good API background.",
+        recommendations=["Gain Kubernetes certification"]
+    )
+    dumped = match.model_dump()
+    assert dumped["match_score"] == 85
+    assert dumped["matching_skills"] == ["Python", "FastAPI"]
+    assert dumped["missing_skills"] == ["Kubernetes"]
+    assert "Kubernetes certification" in dumped["recommendations"][0]
+
+
+def test_file_analysis_result_with_job_match():
+    match = JobMatchResult(match_score=90, matching_skills=["Docker"])
+    res = FileAnalysisResult(
+        filename="test.pdf",
+        file_size_bytes=1024,
+        status="success",
+        job_match=match
+    )
+    assert res.job_match.match_score == 90
+    assert res.job_match.matching_skills == ["Docker"]
+
+
+def test_logs_endpoint():
+    client = TestClient(app)
+    response = client.get("/api/logs?lines=20")
+    assert response.status_code == 200
+    data = response.json()
+    assert "logs" in data
+    assert isinstance(data["logs"], list)

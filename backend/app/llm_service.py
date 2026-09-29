@@ -4,8 +4,8 @@ import os
 import re
 from typing import Optional, Any, Dict, List
 from groq import Groq, APIError, AuthenticationError, RateLimitError
-from .models import ResumeData, EducationItem, WorkExperienceItem
-from .prompts import SYSTEM_PROMPT, EXTRACTION_USER_PROMPT
+from .models import ResumeData, EducationItem, WorkExperienceItem, JobMatchResult
+from .prompts import SYSTEM_PROMPT, EXTRACTION_USER_PROMPT, JD_MATCH_SYSTEM_PROMPT, JD_MATCH_USER_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -286,3 +286,87 @@ def extract_resume_info(resume_text: str, custom_api_key: Optional[str] = None) 
             continue
 
     raise LLMServiceException(f"Failed to analyze resume with AI API: {str(last_error)}")
+
+
+def match_resume_with_jd(
+    resume_text: str,
+    jd_text: str,
+    custom_api_key: Optional[str] = None
+) -> JobMatchResult:
+    """
+    Compares the candidate's resume with a Job Description using Groq AI.
+    Returns match score (0-100), matching skills, missing skills, summary, and recommendations.
+    """
+    client = get_groq_client(custom_api_key)
+    
+    clean_resume = resume_text[:30000]
+    clean_jd = jd_text[:15000]
+    
+    formatted_prompt = (
+        JD_MATCH_USER_PROMPT
+        .replace("__RESUME_TEXT__", clean_resume)
+        .replace("__JOB_DESCRIPTION__", clean_jd)
+    )
+    
+    messages = [
+        {"role": "system", "content": JD_MATCH_SYSTEM_PROMPT},
+        {"role": "user", "content": formatted_prompt},
+    ]
+    
+    models_to_try = resolve_models_for_client(client)
+    last_error = None
+    
+    for model_name in models_to_try:
+        try:
+            logger.info(f"Invoking Groq model for JD match: {model_name}")
+            completion = client.chat.completions.create(
+                model=model_name,
+                messages=messages,
+                temperature=0.1,
+                response_format={"type": "json_object"},
+            )
+            raw_response = completion.choices[0].message.content
+            cleaned_response = clean_json_string(raw_response)
+            
+            parsed = json.loads(cleaned_response)
+            
+            # Safe score parsing
+            score = parsed.get("match_score")
+            try:
+                score_int = int(score) if score is not None else None
+                if score_int is not None:
+                    score_int = max(0, min(100, score_int))
+            except Exception:
+                score_int = 70
+                
+            matching = parsed.get("matching_skills") or []
+            if isinstance(matching, str):
+                matching = [s.strip() for s in re.split(r"[,;•|\n]", matching) if s.strip()]
+            elif isinstance(matching, list):
+                matching = [str(s).strip() for s in matching if s]
+                
+            missing = parsed.get("missing_skills") or []
+            if isinstance(missing, str):
+                missing = [s.strip() for s in re.split(r"[,;•|\n]", missing) if s.strip()]
+            elif isinstance(missing, list):
+                missing = [str(s).strip() for s in missing if s]
+                
+            recs = parsed.get("recommendations") or []
+            if isinstance(recs, str):
+                recs = [r.strip("-• ") for r in recs.split("\n") if r.strip()]
+            elif isinstance(recs, list):
+                recs = [str(r).strip() for r in recs if r]
+                
+            return JobMatchResult(
+                match_score=score_int,
+                matching_skills=matching,
+                missing_skills=missing,
+                summary=sanitize_null_str(parsed.get("summary")),
+                recommendations=recs
+            )
+        except Exception as e:
+            logger.warning(f"JD match error with {model_name}: {e}")
+            last_error = e
+            continue
+            
+    raise LLMServiceException(f"Failed to match with Job Description: {str(last_error)}")
