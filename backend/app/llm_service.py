@@ -9,8 +9,19 @@ from .prompts import SYSTEM_PROMPT, EXTRACTION_USER_PROMPT
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-FALLBACK_MODEL = "llama-3.1-8b-instant"
+# Prioritized list of known high-quality models across Groq tiers
+PREFERRED_MODELS = [
+    "openai/gpt-oss-120b",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-70b-versatile",
+    "llama-3.1-8b-instant",
+    "llama3-70b-8192",
+    "llama3-8b-8192",
+    "openai/gpt-oss-20b",
+    "qwen/qwen3.8-27b",
+    "mixtral-8x7b-32768",
+    "allam-2-7b",
+]
 
 
 class LLMServiceException(Exception):
@@ -38,6 +49,43 @@ def get_groq_client(custom_api_key: Optional[str] = None) -> Groq:
     return Groq(api_key=api_key.strip())
 
 
+def resolve_models_for_client(client: Groq) -> List[str]:
+    """
+    Dynamically queries Groq to inspect available models on the given API key.
+    Prioritizes the best accessible chat/JSON model to prevent 'model_not_found' 404 errors.
+    """
+    try:
+        available_data = client.models.list().data
+        available_ids = {m.id for m in available_data}
+    except Exception as e:
+        logger.warning(f"Could not fetch models.list: {e}")
+        available_ids = set()
+
+    models_to_try = []
+
+    # 1. Respect explicit env model if it exists on account
+    configured = os.getenv("GROQ_MODEL", "").strip()
+    if configured:
+        if not available_ids or configured in available_ids:
+            models_to_try.append(configured)
+
+    # 2. Add matching models from prioritized list
+    for pm in PREFERRED_MODELS:
+        if (not available_ids or pm in available_ids) and pm not in models_to_try:
+            models_to_try.append(pm)
+
+    # 3. Add any other accessible text models (excluding whisper/guard/audio)
+    for aid in available_ids:
+        if aid not in models_to_try and not any(x in aid.lower() for x in ["whisper", "guard", "audio", "vision"]):
+            models_to_try.append(aid)
+
+    # 4. Fallback defaults
+    if not models_to_try:
+        models_to_try = ["openai/gpt-oss-120b", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+
+    return models_to_try
+
+
 def clean_json_string(raw_content: str) -> str:
     """Strip markdown code fence blocks if returned by the LLM."""
     content = raw_content.strip()
@@ -63,7 +111,7 @@ def sanitize_null_str(val: Any) -> Optional[str]:
 def normalize_extracted_dict(raw: Dict[str, Any]) -> ResumeData:
     """
     Normalizes the raw JSON dictionary from the AI model into a clean ResumeData object.
-    Gracefully handles key aliases, string-to-list coersions, and removes dummy values.
+    Gracefully handles key aliases, string-to-list conversions, and removes dummy values.
     """
     if not isinstance(raw, dict):
         return ResumeData()
@@ -123,7 +171,6 @@ def normalize_extracted_dict(raw: Dict[str, Any]) -> ResumeData:
         items = []
         for item in raw_exp:
             if isinstance(item, dict):
-                # Normalize responsibilities
                 raw_resp = item.get("responsibilities") or item.get("duties") or item.get("description")
                 resp_list: Optional[List[str]] = None
                 if isinstance(raw_resp, list):
@@ -177,6 +224,7 @@ def extract_resume_info(resume_text: str, custom_api_key: Optional[str] = None) 
     """
     Calls the Groq AI API to extract structured resume features from the raw text.
     Enforces strict zero hallucination and null output for missing data.
+    Dynamically discovers and uses the best model available on the current API key.
     """
     client = get_groq_client(custom_api_key)
     
@@ -191,7 +239,8 @@ def extract_resume_info(resume_text: str, custom_api_key: Optional[str] = None) 
         {"role": "user", "content": formatted_prompt},
     ]
 
-    models_to_try = [DEFAULT_MODEL, FALLBACK_MODEL] if DEFAULT_MODEL != FALLBACK_MODEL else [DEFAULT_MODEL]
+    # Dynamically find accessible models for this specific API key
+    models_to_try = resolve_models_for_client(client)
     last_error = None
 
     for model_name in models_to_try:

@@ -26,7 +26,12 @@ from .models import (
     ConfigStatus,
 )
 from .pdf_parser import extract_text_from_pdf_bytes, PDFParsingException
-from .llm_service import extract_resume_info, LLMServiceException, DEFAULT_MODEL
+from .llm_service import (
+    extract_resume_info,
+    LLMServiceException,
+    get_groq_client,
+    resolve_models_for_client,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -63,17 +68,26 @@ def health_check():
     load_dotenv(backend_dir / ".env", override=True)
     load_dotenv(root_dir / ".env", override=True)
     api_key = os.getenv("GROQ_API_KEY", "").strip()
+    detected_model = "None"
+    
+    if api_key:
+        try:
+            client = get_groq_client(api_key)
+            models = resolve_models_for_client(client)
+            detected_model = models[0] if models else "Unknown"
+        except Exception:
+            detected_model = os.getenv("GROQ_MODEL", "Unknown")
+
     return ConfigStatus(
         groq_api_key_configured=bool(api_key),
-        groq_model=os.getenv("GROQ_MODEL", DEFAULT_MODEL)
+        groq_model=detected_model
     )
 
 
 @app.post("/api/config/api-key")
 def update_api_key(payload: ApiKeyUpdateRequest):
     """
-    Convenience endpoint allowing users to configure or test their Groq API Key
-    from the web UI without manual server restarts.
+    Validates and updates the Groq API key, discovering the best available model.
     """
     key = payload.api_key.strip()
     if not key:
@@ -81,35 +95,62 @@ def update_api_key(payload: ApiKeyUpdateRequest):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="API key cannot be empty."
         )
-    
-    # Store in memory environment
+
+    # 1. Validate key with Groq
+    try:
+        from groq import Groq, AuthenticationError
+        test_client = Groq(api_key=key)
+        available_models = resolve_models_for_client(test_client)
+        selected_model = available_models[0] if available_models else "Unknown"
+    except AuthenticationError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication failed. The provided Groq API key is invalid or revoked."
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to connect to Groq with this key: {str(e)}"
+        )
+
+    # 2. Store in memory environment
     os.environ["GROQ_API_KEY"] = key
-    
-    # Also attempt writing to backend/.env if writable
+    os.environ["GROQ_MODEL"] = selected_model
+
+    # 3. Persist to backend/.env
     try:
         env_path = backend_dir / ".env"
-        # Read existing or create new
         existing_lines = []
         if env_path.exists():
             existing_lines = env_path.read_text(encoding="utf-8").splitlines()
-        
-        updated = False
+
+        has_key = False
+        has_model = False
         new_lines = []
         for line in existing_lines:
             if line.startswith("GROQ_API_KEY="):
                 new_lines.append(f"GROQ_API_KEY={key}")
-                updated = True
+                has_key = True
+            elif line.startswith("GROQ_MODEL="):
+                new_lines.append(f"GROQ_MODEL={selected_model}")
+                has_model = True
             else:
                 new_lines.append(line)
-        if not updated:
+        if not has_key:
             new_lines.append(f"GROQ_API_KEY={key}")
-            
+        if not has_model:
+            new_lines.append(f"GROQ_MODEL={selected_model}")
+
         env_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
-        logger.info("Successfully updated backend/.env with new GROQ_API_KEY")
+        logger.info(f"Successfully updated backend/.env with verified key and model: {selected_model}")
     except Exception as e:
         logger.warning(f"Could not persist key to backend/.env: {e}")
 
-    return {"status": "success", "message": "Groq API key updated successfully."}
+    return {
+        "status": "success",
+        "message": f"API key verified! Active model: {selected_model}",
+        "detected_model": selected_model
+    }
 
 
 @app.post("/api/analyze", response_model=MultiAnalysisResponse)
