@@ -8,14 +8,14 @@
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f8fafc; /* Slate 50 - Very soft, comfortable light background */
-    color: #1e293b;            /* Slate 800 - Crisp high contrast reading text */
+    background-color: #f7f9fc; /* Soft soothing pastel canvas */
+    color: #1e293b;            /* High-contrast comfortable reading slate */
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Clean, subtle scrollbar for tables and file lists */
+/* Subtle, comfortable pastel scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

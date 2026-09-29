@@ -1,30 +1,23 @@
 import React from 'react';
-import { FileText } from 'lucide-react';
 
 export default function Header() {
   return (
-    <header className="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-30 shadow-xs">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="border-b border-blue-100/80 bg-white/90 backdrop-blur sticky top-0 z-30 shadow-[0_1px_8px_rgba(37,99,235,0.03)]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         
-        {/* Brand */}
-        <div className="flex items-center space-x-3">
-          <div className="h-9 w-9 rounded-lg bg-slate-900 text-white flex items-center justify-center shadow-xs">
-            <FileText className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="font-semibold text-base text-slate-900 tracking-tight leading-none">
-              Resume Analyzer
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Automated PDF Data Extraction & Structured Parsing
-            </p>
-          </div>
+        {/* Brand / Logo */}
+        <div className="flex items-center space-x-3 py-1">
+          <img
+            src="/logo.png"
+            alt="Resume Analyzer"
+            className="h-12 sm:h-14 w-auto object-contain"
+          />
         </div>
 
-        {/* Clean Application Status */}
-        <div className="flex items-center space-x-2 text-xs text-slate-500">
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span className="font-medium text-slate-600">System Ready</span>
+        {/* Clean Status Indicator */}
+        <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-xs font-medium">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>System Online</span>
         </div>
 
       </div>

@@ -15,6 +15,7 @@ import {
   AlertCircle,
   Calendar,
   Building,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function ResumeViewer({ results, onOpenJsonModal }) {
@@ -54,7 +55,7 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
     <div className="w-full space-y-5">
       {/* File Selector Tabs (for Multi-File uploads) */}
       {results.length > 1 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-2 shadow-xs">
+        <div className="bg-white border border-blue-100/80 rounded-2xl p-2.5 shadow-[0_2px_12px_rgba(37,99,235,0.03)]">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2 px-1">
             Uploaded Resumes ({results.length})
           </p>
@@ -68,15 +69,15 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                 <button
                   key={`${item.filename}-${idx}`}
                   onClick={() => setSelectedIndex(idx)}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors border ${
+                  className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all border ${
                     isSelected
-                      ? 'bg-slate-900 border-slate-900 text-white'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
+                      : 'bg-slate-50/80 border-slate-200/80 text-slate-600 hover:bg-blue-50/50'
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
-                      isSuccess ? 'bg-emerald-500' : 'bg-red-500'
+                      isSuccess ? (isSelected ? 'bg-white' : 'bg-emerald-500') : 'bg-rose-500'
                     }`}
                   />
                   <span className="max-w-[140px] truncate">{displayName}</span>
@@ -88,12 +89,12 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
       )}
 
       {/* Main Analysis Card */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+      <div className="bg-white border border-blue-100/80 rounded-2xl shadow-[0_2px_16px_rgba(37,99,235,0.04)] overflow-hidden">
         
         {/* Meta Bar */}
-        <div className="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-6 py-4 bg-gradient-to-r from-blue-50/50 via-indigo-50/30 to-white border-b border-blue-100/80 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-white border border-slate-200 text-slate-700 shadow-2xs">
+            <div className="p-2 rounded-xl bg-white border border-blue-100 text-blue-600 shadow-2xs">
               <FileText className="w-4 h-4" />
             </div>
             <div>
@@ -102,10 +103,10 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                   {filename}
                 </h2>
                 <span
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
                     status === 'success'
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
+                      : 'bg-rose-50 text-rose-700 border border-rose-200/80'
                   }`}
                 >
                   {status === 'success' ? 'Completed' : 'Error'}
@@ -113,7 +114,7 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
               </div>
               {character_count && (
                 <p className="text-[11px] text-slate-500">
-                  {character_count.toLocaleString()} characters extracted
+                  {character_count.toLocaleString()} characters extracted from document
                 </p>
               )}
             </div>
@@ -124,18 +125,18 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => onOpenJsonModal(data, filename)}
-                className="px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs"
                 title="View JSON format"
               >
-                <Code className="w-3.5 h-3.5 text-slate-500" />
+                <Code className="w-3.5 h-3.5 text-blue-600" />
                 <span>JSON View</span>
               </button>
               <button
                 onClick={handleDownloadSingleJson}
-                className="px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs"
                 title="Download JSON file"
               >
-                <Download className="w-3.5 h-3.5 text-slate-500" />
+                <Download className="w-3.5 h-3.5 text-blue-600" />
                 <span>Download</span>
               </button>
             </div>
@@ -145,12 +146,12 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
         {/* Failure Message */}
         {status === 'error' && (
           <div className="p-8 text-center space-y-3 max-w-lg mx-auto my-4">
-            <div className="w-10 h-10 mx-auto rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-600">
+            <div className="w-11 h-11 mx-auto rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-2xs">
               <AlertCircle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-red-900">Processing Failed</h3>
-              <p className="text-xs text-red-700 mt-2 bg-red-50/80 border border-red-200 p-3 rounded-lg font-mono text-left leading-relaxed">
+              <h3 className="text-sm font-semibold text-rose-900">Processing Failed</h3>
+              <p className="text-xs text-rose-700 mt-2 bg-rose-50/70 border border-rose-200 p-3.5 rounded-xl font-mono text-left leading-relaxed">
                 {error_message || 'An error occurred while processing this document.'}
               </p>
             </div>
@@ -165,13 +166,16 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
           <div className="p-6 space-y-6">
             
             {/* 1. Candidate Full Name & Contact Details */}
-            <div className="p-5 bg-slate-50/60 rounded-xl border border-slate-200">
+            <div className="p-6 bg-gradient-to-br from-blue-50/70 via-indigo-50/40 to-slate-50/50 rounded-2xl border border-blue-100/90">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                    Full Name
-                  </span>
-                  <h3 className="text-xl font-bold text-slate-900 mt-0.5">
+                  <div className="flex items-center space-x-1.5">
+                    <User className="w-4 h-4 text-blue-600" />
+                    <span className="text-[11px] font-semibold text-blue-900/70 uppercase tracking-wider">
+                      Candidate Profile
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mt-1">
                     {data.full_name ? data.full_name : renderNullBadge('null')}
                   </h3>
                 </div>
@@ -179,14 +183,14 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                 {/* Contact items */}
                 <div className="flex flex-wrap gap-2 text-xs">
                   {/* Email */}
-                  <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200">
-                    <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white border border-blue-100 text-slate-700 shadow-2xs">
+                    <Mail className="w-3.5 h-3.5 text-blue-500" />
                     <span className="text-slate-500">Email:</span>
                     {data.email ? (
                       <div className="flex items-center space-x-1">
                         <a
                           href={`mailto:${data.email}`}
-                          className="text-slate-800 hover:underline font-medium"
+                          className="text-slate-800 hover:text-blue-600 hover:underline font-medium"
                         >
                           {data.email}
                         </a>
@@ -207,8 +211,8 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                   </div>
 
                   {/* Phone */}
-                  <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white border border-blue-100 text-slate-700 shadow-2xs">
+                    <Phone className="w-3.5 h-3.5 text-blue-500" />
                     <span className="text-slate-500">Phone:</span>
                     {data.phone ? (
                       <div className="flex items-center space-x-1">
@@ -230,8 +234,8 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                   </div>
 
                   {/* Location */}
-                  <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white border border-blue-100 text-slate-700 shadow-2xs">
+                    <MapPin className="w-3.5 h-3.5 text-blue-500" />
                     <span className="text-slate-500">Location:</span>
                     {data.location ? (
                       <span className="text-slate-800 font-medium">{data.location}</span>
@@ -244,12 +248,12 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
             </div>
 
             {/* 2. Professional Summary */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+            <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-200/80 border-l-4 border-l-blue-600 space-y-1.5">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
                 Professional Summary
               </h4>
               {data.professional_summary ? (
-                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-slate-50/50 p-3.5 rounded-lg border border-slate-200/80">
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pt-0.5">
                   {data.professional_summary}
                 </p>
               ) : (
@@ -258,14 +262,14 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
             </div>
 
             {/* 3. Skills */}
-            <div className="space-y-2">
+            <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                    Skills
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                    Skills & Competencies
                   </h4>
                   {Array.isArray(data.skills) && data.skills.length > 0 && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600 border border-slate-200">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200/80">
                       {data.skills.length}
                     </span>
                   )}
@@ -274,12 +278,12 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                 {Array.isArray(data.skills) && data.skills.length > 0 && (
                   <button
                     onClick={() => handleCopy(data.skills.join(', '), 'skills')}
-                    className="text-xs text-slate-500 hover:text-slate-800 flex items-center space-x-1"
+                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center space-x-1 font-medium"
                   >
                     {copiedItem === 'skills' ? (
                       <>
                         <Check className="w-3 h-3 text-emerald-600" />
-                        <span className="text-emerald-600 font-medium">Copied</span>
+                        <span className="text-emerald-600">Copied</span>
                       </>
                     ) : (
                       <>
@@ -292,11 +296,11 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
               </div>
 
               {Array.isArray(data.skills) && data.skills.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                <div className="flex flex-wrap gap-2 pt-0.5">
                   {data.skills.map((skill, sIdx) => (
                     <span
                       key={`${skill}-${sIdx}`}
-                      className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 border border-slate-200/80 text-xs font-medium"
+                      className="px-3 py-1 rounded-xl bg-blue-50/80 hover:bg-blue-100/70 text-blue-800 border border-blue-200/70 text-xs font-medium transition-colors"
                     >
                       {typeof skill === 'string' ? skill : JSON.stringify(skill)}
                     </span>
@@ -310,42 +314,45 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
             </div>
 
             {/* 4. Work Experience */}
-            <div className="space-y-3">
+            <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
               <div className="flex items-center space-x-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <Briefcase className="w-4 h-4 text-blue-600" />
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
                   Work Experience
                 </h4>
                 {Array.isArray(data.work_experience) && data.work_experience.length > 0 && (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600 border border-slate-200">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200/80">
                     {data.work_experience.length}
                   </span>
                 )}
               </div>
 
               {Array.isArray(data.work_experience) && data.work_experience.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   {data.work_experience.map((exp, eIdx) => (
                     <div
                       key={eIdx}
-                      className="p-3.5 rounded-lg bg-slate-50/60 border border-slate-200 space-y-2 text-xs"
+                      className="p-4 rounded-xl bg-slate-50/50 hover:bg-blue-50/20 border border-slate-200/80 space-y-2 text-xs transition-colors"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                         <div>
                           <p className="font-semibold text-slate-900 text-sm">
-                            {exp.job_title ? exp.job_title : renderNullBadge('null')}
+                            {exp.job_title ? exp.job_title : renderNullBadge('null (Job Title)')}
                           </p>
-                          <p className="text-slate-600 font-medium">
-                            {exp.company ? exp.company : renderNullBadge('null')}
-                          </p>
+                          <div className="flex items-center space-x-1.5 text-blue-700 font-medium mt-0.5">
+                            <Building className="w-3.5 h-3.5 text-blue-500" />
+                            <span>{exp.company ? exp.company : renderNullBadge('null (Company)')}</span>
+                          </div>
                         </div>
-                        <div className="text-[11px] text-slate-500">
-                          {exp.start_date || 'null'} — {exp.end_date || 'null'}
+                        <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 bg-white px-2.5 py-1 rounded-lg border border-slate-200/80 w-fit">
+                          <Calendar className="w-3 h-3 text-slate-400" />
+                          <span>{exp.start_date || 'null'} — {exp.end_date || 'null'}</span>
                         </div>
                       </div>
 
                       {/* Responsibilities */}
                       {Array.isArray(exp.responsibilities) && exp.responsibilities.length > 0 ? (
-                        <ul className="mt-2 space-y-1 text-slate-600 list-disc list-outside pl-4">
+                        <ul className="mt-2.5 space-y-1.5 text-slate-600 list-disc list-outside pl-4">
                           {exp.responsibilities.map((resp, rIdx) => (
                             <li key={rIdx} className="leading-relaxed">
                               {typeof resp === 'string' ? resp : JSON.stringify(resp)}
@@ -368,13 +375,13 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
             </div>
 
             {/* 5. Education & Certifications Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               
-              {/* Education */}
-              <div className="space-y-2 p-4 rounded-lg bg-slate-50/60 border border-slate-200">
+              {/* Education (Soft Pastel Purple/Blue) */}
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="flex items-center space-x-2">
-                  <GraduationCap className="w-4 h-4 text-slate-500" />
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  <GraduationCap className="w-4 h-4 text-indigo-600" />
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
                     Education
                   </h4>
                 </div>
@@ -384,7 +391,7 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                     {data.education.map((edu, edIdx) => (
                       <div
                         key={edIdx}
-                        className="p-2.5 rounded-md bg-white border border-slate-200 text-xs space-y-0.5"
+                        className="p-3 rounded-xl bg-purple-50/30 border border-purple-100/80 text-xs space-y-0.5"
                       >
                         <p className="font-semibold text-slate-800">
                           {edu && typeof edu === 'object' && edu.degree
@@ -398,12 +405,10 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                             ? edu.institution
                             : renderNullBadge('null')}
                         </p>
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-[11px] text-purple-700 font-medium">
                           Graduation Year:{' '}
                           {edu && typeof edu === 'object' && edu.graduation_year ? (
-                            <span className="font-medium text-slate-700">
-                              {edu.graduation_year}
-                            </span>
+                            <span>{edu.graduation_year}</span>
                           ) : (
                             renderNullBadge('null')
                           )}
@@ -416,23 +421,24 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                 )}
               </div>
 
-              {/* Certifications */}
-              <div className="space-y-2 p-4 rounded-lg bg-slate-50/60 border border-slate-200">
+              {/* Certifications (Soft Pastel Teal/Emerald) */}
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Award className="w-4 h-4 text-slate-500" />
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  <Award className="w-4 h-4 text-teal-600" />
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
                     Certifications
                   </h4>
                 </div>
 
                 {Array.isArray(data.certifications) && data.certifications.length > 0 ? (
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     {data.certifications.map((cert, cIdx) => (
                       <div
                         key={cIdx}
-                        className="p-2 rounded-md bg-white border border-slate-200 text-xs text-slate-800 font-medium"
+                        className="flex items-center space-x-2 p-2.5 rounded-xl bg-teal-50/60 border border-teal-200/70 text-xs text-teal-950 font-medium"
                       >
-                        {typeof cert === 'string' ? cert : JSON.stringify(cert)}
+                        <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
+                        <span>{typeof cert === 'string' ? cert : JSON.stringify(cert)}</span>
                       </div>
                     ))}
                   </div>

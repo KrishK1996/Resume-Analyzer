@@ -40,15 +40,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
-      {/* Clean Navbar */}
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+      {/* Top Navbar with Logo */}
       <Header />
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
-        {/* Title & Introduction */}
-        <section className="space-y-1.5 pt-2">
+        {/* Intro Banner */}
+        <section className="space-y-1.5 pt-1">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Resume Information Extraction
           </h2>
@@ -59,7 +59,7 @@ export default function App() {
           </p>
         </section>
 
-        {/* Upload Area */}
+        {/* Upload Zone */}
         <section>
           <FileUpload
             files={files}
@@ -71,7 +71,7 @@ export default function App() {
           />
         </section>
 
-        {/* Results Area */}
+        {/* Structured Results Display */}
         {analysisResults && analysisResults.length > 0 && (
           <section className="pt-2">
             <ResumeViewer
@@ -83,10 +83,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-5 mt-auto">
+      <footer className="border-t border-blue-100/70 bg-white py-5 mt-auto">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
           <p>Resume Analyzer — Fullstack Technical Application</p>
-          <p>Python · React · Docker</p>
+          <p className="text-slate-400">Python · React · Docker</p>
         </div>
       </footer>
 
