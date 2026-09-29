@@ -6,6 +6,8 @@ import pytest
 from pypdf import PdfWriter
 from app.pdf_parser import extract_text_from_pdf_bytes, PDFParsingException
 from app.models import ResumeData, EducationItem, WorkExperienceItem
+from app.prompts import EXTRACTION_USER_PROMPT
+from app.llm_service import normalize_extracted_dict
 
 
 def test_empty_bytes_raises_exception():
@@ -30,6 +32,47 @@ def test_blank_pdf_page_raises_no_text_exception():
     with pytest.raises(PDFParsingException) as exc_info:
         extract_text_from_pdf_bytes(pdf_bytes, "blank.pdf")
     assert "no readable text" in str(exc_info.value).lower()
+
+
+def test_prompt_placeholder_replacement_no_keyerror():
+    sample_text = "John Doe Software Engineer"
+    prompt = EXTRACTION_USER_PROMPT.replace("__RESUME_TEXT__", sample_text)
+    assert sample_text in prompt
+    assert "full_name" in prompt
+
+
+def test_normalizer_handles_dummy_strings_and_aliases():
+    raw_dict = {
+        "name": "Krishna Kumar",
+        "contact": "None",
+        "phone_number": "+91 9999999999",
+        "email_address": "krishna@example.com",
+        "location": "N/A",
+        "summary": "Experienced engineer",
+        "skills": "Python, Docker, AWS EC2",
+        "academics": [{"degree": "B.Tech", "university": "Anna University", "year": 2020}],
+        "experience": [
+            {
+                "employer": "Tech Corp",
+                "role": "Cloud Architect",
+                "start_date": "2021",
+                "end_date": "Present",
+                "duties": ["Deployed microservices", "Configured EC2 instances"]
+            }
+        ],
+        "certificates": ["AWS Solutions Architect"]
+    }
+
+    normalized = normalize_extracted_dict(raw_dict)
+    assert normalized.full_name == "Krishna Kumar"
+    assert normalized.location is None  # "N/A" converted to None
+    assert normalized.professional_summary == "Experienced engineer"
+    assert normalized.skills == ["Python", "Docker", "AWS EC2"]
+    assert normalized.education[0].institution == "Anna University"
+    assert normalized.work_experience[0].company == "Tech Corp"
+    assert normalized.work_experience[0].job_title == "Cloud Architect"
+    assert len(normalized.work_experience[0].responsibilities) == 2
+    assert normalized.certifications == ["AWS Solutions Architect"]
 
 
 def test_resume_data_schema_defaults_to_none():

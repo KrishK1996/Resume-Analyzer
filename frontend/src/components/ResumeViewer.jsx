@@ -299,17 +299,19 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                 )}
               </div>
 
-              {data.skills && data.skills.length > 0 ? (
+              {Array.isArray(data.skills) && data.skills.length > 0 ? (
                 <div className="flex flex-wrap gap-2 pt-1">
                   {data.skills.map((skill, sIdx) => (
                     <span
                       key={`${skill}-${sIdx}`}
                       className="px-3 py-1 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 border border-slate-700/70 text-xs font-medium transition-colors"
                     >
-                      {skill}
+                      {typeof skill === 'string' ? skill : JSON.stringify(skill)}
                     </span>
                   ))}
                 </div>
+              ) : typeof data.skills === 'string' && data.skills.trim() ? (
+                <p className="text-xs text-slate-200">{data.skills}</p>
               ) : (
                 <div>{renderNullBadge('null')}</div>
               )}
@@ -329,7 +331,7 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                 )}
               </div>
 
-              {data.work_experience && data.work_experience.length > 0 ? (
+              {Array.isArray(data.work_experience) && data.work_experience.length > 0 ? (
                 <div className="space-y-4">
                   {data.work_experience.map((exp, eIdx) => (
                     <div
@@ -359,14 +361,16 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                       </div>
 
                       {/* Responsibilities */}
-                      {exp.responsibilities && exp.responsibilities.length > 0 ? (
+                      {Array.isArray(exp.responsibilities) && exp.responsibilities.length > 0 ? (
                         <ul className="mt-3 space-y-1.5 text-xs text-slate-300 list-disc list-outside pl-4">
                           {exp.responsibilities.map((resp, rIdx) => (
                             <li key={rIdx} className="leading-relaxed">
-                              {resp}
+                              {typeof resp === 'string' ? resp : JSON.stringify(resp)}
                             </li>
                           ))}
                         </ul>
+                      ) : typeof exp.responsibilities === 'string' && exp.responsibilities.trim() ? (
+                        <p className="mt-2 text-xs text-slate-300 pl-4">{exp.responsibilities}</p>
                       ) : (
                         <div className="pt-2 text-xs text-slate-500">
                           Responsibilities: {renderNullBadge('null')}
@@ -397,7 +401,7 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                   )}
                 </div>
 
-                {data.education && data.education.length > 0 ? (
+                {Array.isArray(data.education) && data.education.length > 0 ? (
                   <div className="space-y-3">
                     {data.education.map((edu, edIdx) => (
                       <div
@@ -405,14 +409,20 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                         className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/60 text-xs space-y-1"
                       >
                         <p className="font-semibold text-slate-200">
-                          {edu.degree ? edu.degree : renderNullBadge('null (Degree)')}
+                          {edu && typeof edu === 'object' && edu.degree
+                            ? edu.degree
+                            : typeof edu === 'string'
+                            ? edu
+                            : renderNullBadge('null (Degree)')}
                         </p>
                         <p className="text-slate-400">
-                          {edu.institution ? edu.institution : renderNullBadge('null (Institution)')}
+                          {edu && typeof edu === 'object' && edu.institution
+                            ? edu.institution
+                            : renderNullBadge('null (Institution)')}
                         </p>
                         <p className="text-[11px] text-indigo-400">
                           Graduation Year:{' '}
-                          {edu.graduation_year ? (
+                          {edu && typeof edu === 'object' && edu.graduation_year ? (
                             <span className="font-medium text-slate-300">
                               {edu.graduation_year}
                             </span>
@@ -435,14 +445,14 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
                     Certifications
                   </h4>
-                  {data.certifications && data.certifications.length > 0 && (
+                  {Array.isArray(data.certifications) && data.certifications.length > 0 && (
                     <span className="px-2 py-0.5 rounded-full text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                       {data.certifications.length}
                     </span>
                   )}
                 </div>
 
-                {data.certifications && data.certifications.length > 0 ? (
+                {Array.isArray(data.certifications) && data.certifications.length > 0 ? (
                   <div className="space-y-2">
                     {data.certifications.map((cert, cIdx) => (
                       <div
@@ -450,10 +460,12 @@ export default function ResumeViewer({ results, onOpenJsonModal }) {
                         className="flex items-center space-x-2 p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/60 text-xs text-slate-200"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                        <span>{cert}</span>
+                        <span>{typeof cert === 'string' ? cert : JSON.stringify(cert)}</span>
                       </div>
                     ))}
                   </div>
+                ) : typeof data.certifications === 'string' && data.certifications.trim() ? (
+                  <p className="text-xs text-slate-200">{data.certifications}</p>
                 ) : (
                   <div>{renderNullBadge('null')}</div>
                 )}
