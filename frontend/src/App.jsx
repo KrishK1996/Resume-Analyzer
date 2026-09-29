@@ -72,7 +72,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900 transition-colors duration-200 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#fafafe] dark:bg-[#0a0a12] text-[#0f0f1e] dark:text-[#f0f0ff] flex flex-col font-sans transition-all duration-300 relative overflow-x-hidden">
       {/* Dynamic Animated Text Ribbons in Background */}
       <DynamicBackground />
 
@@ -88,14 +88,14 @@ export default function App() {
         
         {/* Intro Banner */}
         <section className="space-y-1.5 pt-1">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#0f0f1e] dark:text-[#f0f0ff]">
             Resume Information Extraction
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
+          <p className="text-[#0f0f1e]/60 dark:text-[#f0f0ff]/50 text-xs sm:text-sm max-w-2xl leading-relaxed">
             Upload candidate PDF resumes to extract structured profiles including contact information,
             skills, work history, education, certifications, and summary. You can also supply a target Job
             Description for automated skill gap analysis. Missing details are preserved as{' '}
-            <code className="px-1.5 py-0.5 rounded text-xs bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">
+            <code className="px-1.5 py-0.5 rounded text-xs bg-[#6668F6]/8 text-[#6668F6]/60 border border-[#6668F6]/20 font-mono">
               null
             </code>.
           </p>
@@ -127,10 +127,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-blue-100/70 dark:border-slate-800 bg-white dark:bg-slate-900 py-5 mt-auto transition-colors relative z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <footer className="border-t border-[#6668F6]/10 dark:border-[#6668F6]/15 bg-white/80 dark:bg-[#0d0d1e]/80 backdrop-blur py-5 mt-auto transition-all duration-300 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#0f0f1e]/40 dark:text-[#f0f0ff]/30">
           <p>Resume Analyzer — Fullstack Technical Application</p>
-          <p className="text-slate-400 dark:text-slate-500">Python · React · Docker</p>
+          <p className="text-[#0f0f1e]/30 dark:text-[#f0f0ff]/20">Python · React · Docker</p>
         </div>
       </footer>
 

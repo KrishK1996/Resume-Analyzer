@@ -25,55 +25,55 @@ export default function JsonModal({ isOpen, onClose, data, filename }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-3xl rounded-2xl p-5 shadow-2xl flex flex-col max-h-[85vh] transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a0a12]/70 backdrop-blur-sm">
+      <div className="bg-white dark:bg-[#0d0d1e] border border-[#6668F6]/20 dark:border-[#6668F6]/25 w-full max-w-3xl rounded-2xl p-5 shadow-[0_8px_40px_rgba(102,104,246,0.2)] flex flex-col max-h-[85vh] transition-all duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 flex-shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#6668F6]/10 dark:border-[#6668F6]/15 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-              <Code className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 rounded-xl bg-[#6668F6]/10 dark:bg-[#6668F6]/12 text-[#6668F6]">
+              <Code className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Extracted JSON Data</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{filename || 'Document'}</p>
+              <h3 className="text-sm font-semibold text-[#0f0f1e] dark:text-[#f0f0ff]">Extracted JSON Data</h3>
+              <p className="text-xs text-[#0f0f1e]/45 dark:text-[#f0f0ff]/35">{filename || 'Document'}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={handleCopy}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs"
+              className="px-2.5 py-1.5 rounded-lg border border-[#6668F6]/20 dark:border-[#6668F6]/25 bg-white dark:bg-[#0a0a12] hover:bg-[#6668F6]/8 dark:hover:bg-[#6668F6]/10 text-[#0f0f1e]/70 dark:text-[#f0f0ff]/60 text-xs font-medium flex items-center space-x-1.5 transition-all duration-300 shadow-[0_1px_6px_rgba(102,104,246,0.08)]"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Copied</span>
+                  <Check className="w-3.5 h-3.5 text-[#66F6AC]" />
+                  <span className="text-[#66F6AC] font-medium">Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5 text-slate-400" />
+                  <Copy className="w-3.5 h-3.5 text-[#6668F6]/60" />
                   <span>Copy</span>
                 </>
               )}
             </button>
             <button
               onClick={handleDownload}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs"
+              className="px-2.5 py-1.5 rounded-lg border border-[#6668F6]/20 dark:border-[#6668F6]/25 bg-white dark:bg-[#0a0a12] hover:bg-[#6668F6]/8 dark:hover:bg-[#6668F6]/10 text-[#0f0f1e]/70 dark:text-[#f0f0ff]/60 text-xs font-medium flex items-center space-x-1.5 transition-all duration-300 shadow-[0_1px_6px_rgba(102,104,246,0.08)]"
             >
-              <Download className="w-3.5 h-3.5 text-slate-400" />
+              <Download className="w-3.5 h-3.5 text-[#6668F6]/60" />
               <span>Download</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+              className="p-1 rounded-lg text-[#0f0f1e]/35 dark:text-[#f0f0ff]/30 hover:text-[#F666B0] dark:hover:text-[#F666B0] transition-all duration-300"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* JSON Viewer */}
-        <div className="mt-3 flex-1 overflow-auto bg-slate-950 rounded-xl p-4 font-mono text-xs text-slate-200 leading-relaxed shadow-inner border border-slate-800/60">
+        {/* JSON Viewer — always dark terminal bg */}
+        <div className="mt-3 flex-1 overflow-auto bg-[#0a0a12] rounded-xl p-4 font-mono text-xs text-[#f0f0ff]/80 leading-relaxed shadow-inner border border-[#6668F6]/15">
           <pre>{jsonString}</pre>
         </div>
       </div>

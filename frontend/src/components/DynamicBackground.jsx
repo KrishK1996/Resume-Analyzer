@@ -12,35 +12,35 @@ export default function DynamicBackground() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0 flex flex-col justify-around py-6 opacity-[0.038] dark:opacity-[0.048] transition-opacity duration-300"
+      className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0 flex flex-col justify-around py-6 opacity-[0.040] dark:opacity-[0.055] transition-opacity duration-300"
     >
-      {/* Row 1: Moves Left */}
+      {/* Row 1: Moves Left — Violet */}
       <div className="overflow-hidden whitespace-nowrap">
-        <div className="animate-marquee-left text-xs sm:text-sm font-black tracking-[0.25em] text-slate-800 dark:text-blue-200">
+        <div className="animate-marquee-left text-xs sm:text-sm font-black tracking-[0.25em] text-[#6668F6]">
           <span>{repeatText(TEXT_BLOCK_1)}</span>
           <span>{repeatText(TEXT_BLOCK_1)}</span>
         </div>
       </div>
 
-      {/* Row 2: Moves Right */}
+      {/* Row 2: Moves Right — Mint */}
       <div className="overflow-hidden whitespace-nowrap">
-        <div className="animate-marquee-right text-xs sm:text-sm font-black tracking-[0.25em] text-blue-900 dark:text-indigo-200">
+        <div className="animate-marquee-right text-xs sm:text-sm font-black tracking-[0.25em] text-[#66F6AC]">
           <span>{repeatText(TEXT_BLOCK_2)}</span>
           <span>{repeatText(TEXT_BLOCK_2)}</span>
         </div>
       </div>
 
-      {/* Row 3: Moves Left */}
+      {/* Row 3: Moves Left — Yellow */}
       <div className="overflow-hidden whitespace-nowrap">
-        <div className="animate-marquee-left-fast text-xs sm:text-sm font-black tracking-[0.25em] text-slate-800 dark:text-blue-200">
+        <div className="animate-marquee-left-fast text-xs sm:text-sm font-black tracking-[0.25em] text-[#F6F466]">
           <span>{repeatText(TEXT_BLOCK_3)}</span>
           <span>{repeatText(TEXT_BLOCK_3)}</span>
         </div>
       </div>
 
-      {/* Row 4: Moves Right */}
+      {/* Row 4: Moves Right — Pink */}
       <div className="overflow-hidden whitespace-nowrap">
-        <div className="animate-marquee-right-fast text-xs sm:text-sm font-black tracking-[0.25em] text-blue-900 dark:text-indigo-200">
+        <div className="animate-marquee-right-fast text-xs sm:text-sm font-black tracking-[0.25em] text-[#F666B0]">
           <span>{repeatText(TEXT_BLOCK_4)}</span>
           <span>{repeatText(TEXT_BLOCK_4)}</span>
         </div>
