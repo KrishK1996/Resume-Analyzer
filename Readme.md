@@ -9,6 +9,9 @@
 
 An intelligent, multi-file PDF resume analyzer that extracts candidate profile information with strict factual accuracy using Groq AI (`llama-3.3-70b-versatile`). Missing information is faithfully represented as `null` with zero hallucinations. Built with Python (FastAPI), React, Docker, and deployed on AWS EC2.
 
+> **🌐 Live AWS EC2 Deployment:** [http://34.230.75.69:8501](http://34.230.75.69:8501)  
+> **📦 GitHub Repository:** [https://github.com/KrishK1996/Resume-Analyzer](https://github.com/KrishK1996/Resume-Analyzer)
+
 ---
 
 ## 📑 Table of Contents
