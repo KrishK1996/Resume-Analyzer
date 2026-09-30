@@ -153,8 +153,21 @@ def test_file_analysis_result_with_job_match():
 
 def test_logs_endpoint():
     client = TestClient(app)
-    response = client.get("/api/logs?lines=20")
-    assert response.status_code == 200
-    data = response.json()
-    assert "logs" in data
-    assert isinstance(data["logs"], list)
+    # Without credentials, access should be forbidden if server has configured key
+    import os
+    configured_key = os.getenv("ADMIN_KEY") or os.getenv("GROQ_API_KEY")
+    if configured_key:
+        unauth_response = client.get("/api/logs?lines=20")
+        assert unauth_response.status_code == 403
+
+        auth_response = client.get("/api/logs?lines=20", headers={"X-Admin-Key": configured_key})
+        assert auth_response.status_code == 200
+        data = auth_response.json()
+        assert "logs" in data
+        assert isinstance(data["logs"], list)
+    else:
+        response = client.get("/api/logs?lines=20")
+        assert response.status_code == 200
+        data = response.json()
+        assert "logs" in data
+        assert isinstance(data["logs"], list)

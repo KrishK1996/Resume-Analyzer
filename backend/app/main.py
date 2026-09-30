@@ -116,8 +116,22 @@ def health_check():
 
 
 @app.get("/api/logs")
-def get_recent_logs(lines: int = 100):
-    """Returns the most recent lines from the centralized log file."""
+def get_recent_logs(
+    lines: int = 100,
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+    admin_key: Optional[str] = None
+):
+    """Restricted endpoint for backend operation logs (protected by server key)."""
+    configured_key = os.getenv("ADMIN_KEY") or os.getenv("GROQ_API_KEY")
+    provided_key = x_admin_key or admin_key
+    
+    # If the server is configured with a key, restrict public access to authorized requests
+    if configured_key and provided_key != configured_key:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="System logs are restricted to backend administrator access."
+        )
+
     if not log_file_path.exists():
         return {"logs": [], "total_lines": 0}
     try:

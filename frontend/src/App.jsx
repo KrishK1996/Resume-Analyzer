@@ -3,7 +3,6 @@ import Header from './components/Header';
 import FileUpload from './components/FileUpload';
 import ResumeViewer from './components/ResumeViewer';
 import JsonModal from './components/JsonModal';
-import LogsModal from './components/LogsModal';
 import DynamicBackground from './components/DynamicBackground';
 import { analyzeResumes } from './services/api';
 
@@ -14,7 +13,6 @@ export default function App() {
   const [analysisResults, setAnalysisResults] = useState(null);
   const [globalError, setGlobalError] = useState(null);
   const [jsonModalState, setJsonModalState] = useState({ isOpen: false, data: null, filename: '' });
-  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
   // Light / Dark mode management with persistent storage
   const [theme, setTheme] = useState(() => {
@@ -76,11 +74,10 @@ export default function App() {
       {/* Dynamic Animated Text Ribbons in Background */}
       <DynamicBackground />
 
-      {/* Top Navbar with Logo, Theme Switcher & Logs Trigger */}
+      {/* Top Navbar with Logo & Theme Switcher */}
       <Header
         isDarkMode={theme === 'dark'}
         onToggleTheme={toggleTheme}
-        onOpenLogsModal={() => setIsLogsModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -140,12 +137,6 @@ export default function App() {
         onClose={() => setJsonModalState({ isOpen: false, data: null, filename: '' })}
         data={jsonModalState.data}
         filename={jsonModalState.filename}
-      />
-
-      {/* Centralized Operation Logs Modal */}
-      <LogsModal
-        isOpen={isLogsModalOpen}
-        onClose={() => setIsLogsModalOpen(false)}
       />
     </div>
   );

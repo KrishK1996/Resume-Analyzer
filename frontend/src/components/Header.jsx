@@ -1,7 +1,7 @@
 import React from 'react';
-import { Sun, Moon, Terminal } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 
-export default function Header({ isDarkMode, onToggleTheme, onOpenLogsModal }) {
+export default function Header({ isDarkMode, onToggleTheme }) {
   return (
     <header className="border-b border-[#6668F6]/15 dark:border-[#6668F6]/20 bg-white/90 dark:bg-[#0d0d1e]/90 backdrop-blur sticky top-0 z-30 shadow-[0_1px_12px_rgba(102,104,246,0.06)] transition-all duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
@@ -15,17 +15,8 @@ export default function Header({ isDarkMode, onToggleTheme, onOpenLogsModal }) {
           />
         </div>
 
-        {/* Header Controls: Logs, Theme Switcher, Online Status */}
+        {/* Header Controls: Theme Switcher, Online Status */}
         <div className="flex items-center space-x-2.5">
-          {/* Centralized Log Viewer Trigger */}
-          <button
-            onClick={onOpenLogsModal}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-[#6668F6]/20 dark:border-[#6668F6]/25 bg-[#6668F6]/5 dark:bg-[#6668F6]/8 hover:bg-[#6668F6]/10 dark:hover:bg-[#6668F6]/15 text-[#0f0f1e]/70 dark:text-[#f0f0ff]/70 text-xs font-medium transition-all duration-300"
-            title="View Centralized Operation Logs"
-          >
-            <Terminal className="w-3.5 h-3.5 text-[#6668F6]" />
-            <span className="hidden sm:inline">System Logs</span>
-          </button>
 
           {/* Theme Toggle (Light / Dark Mode) */}
           <button
