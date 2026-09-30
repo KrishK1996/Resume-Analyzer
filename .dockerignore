@@ -10,3 +10,6 @@ backend/.env
 frontend/.env
 *.md
 !Readme.md
+backend/logs
+logs
+.pytest_cache
